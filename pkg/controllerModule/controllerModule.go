@@ -11,11 +11,11 @@ import (
 	"../structModule"
 )
 
-func AllKeys() structModule.MultipleKeys {
+func AllKeys(t_message string) structModule.MultipleKeys {
 
 	dbConnectModule.Mysql_Open()
 
-	keyArrays := dbConnectModule.GetAllKeys()
+	keyArrays := dbConnectModule.GetAllKeys(t_message)
 
 	dbConnectModule.Mysql_Close()
 	return keyArrays

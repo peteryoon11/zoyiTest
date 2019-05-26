@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"../structModule"
 	_ "github.com/go-sql-driver/mysql"
@@ -294,7 +295,8 @@ func AppendKey(t_name string) structModule.MultipleKeys {
 	//Mysql_Close()
 	return tempResult
 }
-func GetAllKeys() structModule.MultipleKeys {
+func GetAllKeys(t_message string) structModule.MultipleKeys {
+
 	rows, err := db.Query("SELECT  id, name FROM  tb_key")
 	if err != nil {
 		fmt.Println("error in GetBookInfo")
@@ -325,7 +327,20 @@ func GetAllKeys() structModule.MultipleKeys {
 
 		tempKeys = append(tempKeys, structModule.Keys{tempId, name})
 	}
-	tempResult := structModule.MultipleKeys{tempKeys}
+	var tempResult structModule.MultipleKeys
+	if len(t_message) > 0 {
+		var keysTemp []structModule.Keys
+		for _, item := range tempKeys {
+			if strings.EqualFold(item.Name, t_message) {
+				keysTemp = append(keysTemp, item)
+				tempResult = structModule.MultipleKeys{keysTemp}
+			}
+		}
+		//tempResult = structModule.MultipleKeys{tempKeys}
+	} else {
+		tempResult = structModule.MultipleKeys{tempKeys}
+	}
+
 	//Mysql_Close()
 	return tempResult
 }

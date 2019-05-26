@@ -31,8 +31,9 @@ cd src
 
 chmod 755 main 
 
-./main
+./main or ./main.exe
 
 
 3. localhost:8090 
 
+localhost:8090/keys

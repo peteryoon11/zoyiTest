@@ -291,8 +291,9 @@ func appendKey(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 // 1. 모든 키 가져오기
 func getAllKey(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
-	respondResult := controllerModule.AllKeys()
+	queryValues := r.URL.Query()
+	t_message := queryValues.Get("name")
+	respondResult := controllerModule.AllKeys(t_message)
 	temp, err := json.Marshal(respondResult)
 	if err != nil {
 		fmt.Println(err)
