@@ -248,6 +248,7 @@ func UpdateKey(t_name string, t_keyId string) structModule.MultipleKeys {
 	return tempResult
 }
 func AppendKey(t_name string) structModule.MultipleKeys {
+
 	result, err := db.Exec("INSERT INTO `zoyi_test`.`tb_key` (`name`) VALUES (?)", t_name)
 	if err != nil {
 		//log.Fatal(err)
@@ -327,4 +328,41 @@ func GetAllKeys() structModule.MultipleKeys {
 	tempResult := structModule.MultipleKeys{tempKeys}
 	//Mysql_Close()
 	return tempResult
+}
+func CheckUniquName(t_name string) int {
+
+	rows, err := db.Query("SELECT  id, name FROM  tb_key where name = ? ", t_name)
+	if err != nil {
+		fmt.Println("error in GetBookInfo")
+		fmt.Println(err)
+	}
+	defer rows.Close()
+
+	var (
+		//	no      int
+		id   string
+		name string
+	)
+	var tempKeys []structModule.Keys
+
+	for rows.Next() {
+		err = rows.Scan(&id, &name)
+		if err != nil {
+			fmt.Println("inner rows next")
+			fmt.Println(err)
+		}
+		fmt.Println("id ", id, " name ", name)
+		//	tempCount = append(tempCount, structModule.ValAPIKey{id, AuthKey})
+		//	newSeqNo = seq_no
+		tempId, err := strconv.Atoi(id)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		tempKeys = append(tempKeys, structModule.Keys{tempId, name})
+	}
+	//tempResult := structModule.MultipleKeys{tempKeys}
+	//Mysql_Close()
+	return len(tempKeys)
+
 }

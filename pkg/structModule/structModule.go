@@ -78,3 +78,7 @@ type DetectResult struct {
 type LocaleStruct_req struct {
 	Locale string `json:"locale"`
 }
+type FailRespond struct {
+	Result bool   `json:"result"`
+	Reason string `json:"reason"`
+}

@@ -23,8 +23,13 @@ func AllKeys() structModule.MultipleKeys {
 func AppendKeys(name string) structModule.MultipleKeys {
 	fmt.Println(" AppendKeys name ", name)
 	dbConnectModule.Mysql_Open()
+	var keyArrays structModule.MultipleKeys
+	/* if validationModule.IsSAlphabetAndDot(name) {
 
-	keyArrays := dbConnectModule.AppendKey(name)
+	} else {
+
+	} */
+	keyArrays = dbConnectModule.AppendKey(name)
 
 	dbConnectModule.Mysql_Close()
 	/* 	var result structModule.MultipleKeys
@@ -125,4 +130,13 @@ func HttpClient(urlPath string, respondUser structModule.MessageStruct) []byte {
 	str := string(bytes) //바이트를 문자열로
 	fmt.Println(str)
 	return bytes
+}
+func CheckUniquName(t_name string) int {
+
+	dbConnectModule.Mysql_Open()
+
+	keyArrays := dbConnectModule.CheckUniquName(t_name)
+	fmt.Println("keyArrays ", keyArrays)
+	dbConnectModule.Mysql_Close()
+	return keyArrays
 }
