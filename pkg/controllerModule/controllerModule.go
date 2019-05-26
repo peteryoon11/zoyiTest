@@ -1,7 +1,11 @@
 package controllerModule
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 
 	"../dbConnectModule"
 	"../structModule"
@@ -75,10 +79,50 @@ func UpdateTransLocaleValue(value string, keyId string, locale string) structMod
 	fmt.Println(" AppendKeys name ", value)
 	dbConnectModule.Mysql_Open()
 
-	keyArrays := dbConnectModule.InsertTrans(value, keyId, locale)
+	keyArrays := dbConnectModule.UpdateTransUniq(value, keyId, locale)
 
 	dbConnectModule.Mysql_Close()
 	/* 	var result structModule.MultipleKeys
 	   	result.keys = keyArrays */
 	return keyArrays
+}
+func LanguagDetectController(message string) structModule.DetectResult {
+
+	url := "https://ws.detectlanguage.com"
+
+	path := "/0.2/detect"
+
+	temp := structModule.MessageStruct{message}
+	var result structModule.DetectResult
+	fmt.Println("temp ", temp)
+	temp_result := HttpClient(url+path, temp)
+	json.Unmarshal(temp_result, &result)
+	return result
+}
+
+// https://stackoverflow.com/questions/51452148/how-can-i-make-a-request-with-a-bearer-token-in-go
+func HttpClient(urlPath string, respondUser structModule.MessageStruct) []byte {
+	pbytes, _ := json.Marshal(respondUser)
+	buff := bytes.NewBuffer(pbytes)
+	var bearer = "Bearer 56c270e9a8e381b428c0e64314651c4d"
+
+	req, err := http.NewRequest("POST", urlPath, buff)
+	req.Header.Add("User-Agent", "TestAgent")
+	req.Header.Add("Content-Type", "application/json")
+
+	req.Header.Add("Authorization", bearer)
+
+	if err != nil {
+		panic(err)
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	bytes, _ := ioutil.ReadAll(resp.Body)
+	str := string(bytes) //바이트를 문자열로
+	fmt.Println(str)
+	return bytes
 }

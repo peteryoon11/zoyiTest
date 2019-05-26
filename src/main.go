@@ -15,6 +15,39 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+// 8. Language detect
+func LanguagDetect(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	queryValues := r.URL.Query()
+	t_message := queryValues.Get("message")
+	respondResult := controllerModule.LanguagDetectController(t_message)
+	fmt.Println("respondResult", respondResult)
+
+	//fmt.Fprintf(w, "hello, %s!\n", queryValues.Get("name"))
+	/* test, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	var testAuth structModule.ValueStruct_req
+
+	err = json.Unmarshal(test, &testAuth)
+	fmt.Println("testAuth.Value ", testAuth.Value, "key id ", ps.ByName("keyId"), " locale ", ps.ByName("locale"))
+	respondResult := controllerModule.UpdateTransLocaleValue(testAuth.Value, ps.ByName("keyId"), ps.ByName("locale"))
+	temp, err := json.Marshal(respondResult)
+	if err != nil {
+		fmt.Println(err)
+	} */
+	//fmt.Println("temp ", temp)
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	onlyRocale := structModule.LocaleStruct_req{respondResult.Data.Detections[0].Language}
+	temp, err := json.Marshal(onlyRocale)
+	if err != nil {
+		fmt.Println(err)
+	}
+	//fmt.Println()
+	w.Write(temp)
+}
+
 // 7.키의 특정 언어 번역 수정하기
 func UpdateTransLocaleValue(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
@@ -198,7 +231,7 @@ func main() {
 	router.PUT("/keys/:keyId/translations/:locale", UpdateTransLocaleValue)
 
 	// 8. Language detect
-	router.GET("/language_detect", getMyBook)
+	router.GET("/language_detect", LanguagDetect)
 
 	log.Fatal(http.ListenAndServe(":8090", router))
 }

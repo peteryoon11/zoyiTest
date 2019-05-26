@@ -61,3 +61,20 @@ type Translations struct {
 	Locale string `json:"locale"`
 	Value  string `json:"value"`
 }
+type MessageStruct struct {
+	Q string `json:"q"`
+}
+
+type DetectResult struct {
+	Data struct {
+		Detections []struct {
+			Confidence float64 `json:"confidence"`
+			IsReliable bool    `json:"isReliable"`
+			Language   string  `json:"language"`
+		} `json:"detections"`
+	} `json:"data"`
+}
+
+type LocaleStruct_req struct {
+	Locale string `json:"locale"`
+}
